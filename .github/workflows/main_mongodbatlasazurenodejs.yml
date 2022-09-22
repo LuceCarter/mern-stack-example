@@ -22,7 +22,7 @@ jobs:
           node-version: '16.x'    
 
       - name: Install server npm packages
-        uses: 'bahmutov/npm-install@645c62e5631878f8e6e859a0871c2b014d3f39bc'
+        uses: bahmutov/npm-install@645c62e5631878f8e6e859a0871c2b014d3f39bc
         with:
             working-directory: mern/server
 
@@ -32,7 +32,7 @@ jobs:
           npm run build
 
       - name: Install client npm packages
-        uses: 'bahmutov/npm-install@645c62e5631878f8e6e859a0871c2b014d3f39bc'
+        uses: bahmutov/npm-install@645c62e5631878f8e6e859a0871c2b014d3f39bc
         with:
             working-directory: mern/client
 
