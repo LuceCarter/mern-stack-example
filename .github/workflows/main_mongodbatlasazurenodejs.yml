@@ -35,7 +35,7 @@ jobs:
         uses: actions/upload-artifact@v2
         with:
           name: mern-app
-          path: ../server
+          path: mern/server
 
   deploy:
     runs-on: ubuntu-latest
