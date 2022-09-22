@@ -23,7 +23,7 @@ jobs:
         run: |
           cd mern/server
           npm install
-          npm run build
+          npm start
       
       - name: Build client
         run: |
