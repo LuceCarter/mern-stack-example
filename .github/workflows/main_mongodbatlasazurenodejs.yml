@@ -19,12 +19,15 @@ jobs:
         with:
           node-version: '16.x'      
 
-      - name: Build server and client
+      - name: Build server
         run: |
           cd mern/server
           npm install
           npm run build
-          cd ../client
+      
+      - name: Build client
+        run: |
+          cd mern/client
           npm install
           npm run build
             
