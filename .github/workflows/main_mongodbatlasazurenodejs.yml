@@ -15,31 +15,23 @@ jobs:
 
     steps:
       - uses: actions/checkout@v2
-
-      - name: Set up Node.js version
-        uses: actions/setup-node@v3
+      - uses: actions/setup-node@v3
         with:
-          node-version: '16.x'    
+          node-version: '16.x'  
 
-      - name: Install server npm packages
-        uses: bahmutov/npm-install@645c62e5631878f8e6e859a0871c2b014d3f39bc
+      - name: Install server and client
+        uses: bahmutov/npm-install@v1
         with:
-            working-directory: mern/server
+            working-directory: |
+              mern/server
+              mern/client
 
-      - name: Build server
+      - name: Build server and client
         run: |
           cd mern/server
           npm run build
-
-      - name: Install client npm packages
-        uses: bahmutov/npm-install@645c62e5631878f8e6e859a0871c2b014d3f39bc
-        with:
-            working-directory: mern/client
-
-      - name: Build client
-        run: |
-          cd mern/client
-          npm run build --if-present
+          cd ../client
+          npm run build
             
       - name: Upload artifact for deployment job
         uses: actions/upload-artifact@v2
