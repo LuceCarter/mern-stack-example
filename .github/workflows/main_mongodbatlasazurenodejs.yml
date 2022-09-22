@@ -1,60 +1,58 @@
-# Docs for the Azure Web Apps Deploy action: https://github.com/Azure/webapps-deploy
-# More GitHub Actions for Azure: https://github.com/Azure/actions
+# This is a basic workflow to help you get started with Actions
 
 name: Build and deploy Node.js app to Azure Web App - mongodbatlasazurenodejs
 
+# Controls when the workflow will run
 on:
+  # Triggers the workflow on push or pull request events but only for the main branch
   push:
-    branches:
-      - main
+    branches: [ $default-branch ]
+  pull_request:
+    branches: [ $default-branch ]
+
+  # Allows you to run this workflow manually from the Actions tab
   workflow_dispatch:
 
+# A workflow run is made up of one or more jobs that can run sequentially or in parallel
 jobs:
+  # This workflow contains a single job called "build"
+  
   build:
+    # The type of runner that the job will run on
     runs-on: ubuntu-latest
-
+    environment: Testing
+    strategy:
+      matrix:
+        node-version: [14.x , 16.x]
+      max-parallel: 1  
+    
+    # Steps represent a sequence of tasks that will be executed as part of the job
     steps:
+      # Checks-out your repository under $GITHUB_WORKSPACE, so your job can access it
       - uses: actions/checkout@v2
-      - uses: actions/setup-node@v3
-        with:
-          node-version: '16.x'      
+        with: 
+          ref: 'main-test'
 
-      - name: Build server
-        run: |
-          cd mern/server
-          npm install
-          npm start
-      
-      - name: Build client
-        run: |
-          cd mern/client
-          npm install
-          npm run build
-            
-      - name: Upload artifact for deployment job
-        uses: actions/upload-artifact@v2
+      - name: Install server npm packages
+        uses: bahmutov/npm-install@v1
         with:
-          name: server-and-client
-          path: .
+          working-directory: mern/server
 
-  deploy:
-    runs-on: ubuntu-latest
-    needs: build
-    environment:
-      name: 'Production'
-      url: ${{ steps.deploy-to-webapp.outputs.webapp-url }}
-
-    steps:
-      - name: Download artifact from build job
-        uses: actions/download-artifact@v2
+      - name: Install client npm packages
+        uses: bahmutov/npm-install@v1
         with:
-          name: node-app
+          working-directory: mern/client
 
-      - name: 'Deploy to Azure Web App'
-        id: deploy-to-webapp
-        uses: azure/webapps-deploy@v2
+      - name: Start server in the background
+        env: 
+          ATLAS_URI: ${{ secrets.ATLAS_URI }}
+        run: (cd mern/server && echo "ATLAS_URI=$ATLAS_URI" > config.env  && npm start &)
+
+      - name: Start React app in the background
+        run: (cd mern/client && npm start &)
+
+      - name: Install Cypress and run tests
+        uses: cypress-io/github-action@v2
         with:
-          app-name: 'mongodbatlasazurenodejs'
-          slot-name: 'Production'
-          publish-profile: ${{ secrets.AZUREAPPSERVICE_PUBLISHPROFILE_5DE5D55FE6394B1FB9BB9A1378EB47DB }}
-          package: .
+          working-directory: mern/client
+        
