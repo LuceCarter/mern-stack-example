@@ -17,20 +17,15 @@ jobs:
       - uses: actions/checkout@v2
       - uses: actions/setup-node@v3
         with:
-          node-version: '16.x'  
-
-      - name: Install server and client
-        uses: bahmutov/npm-install@v1
-        with:
-            working-directory: |
-              mern/server
-              mern/client
+          node-version: '16.x'      
 
       - name: Build server and client
         run: |
           cd mern/server
+          npm install
           npm run build
           cd ../client
+          npm install
           npm run build
             
       - name: Upload artifact for deployment job
